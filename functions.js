@@ -1,10 +1,6 @@
     
     function getRandomMember() {
          $.ajax({
-            headers:  {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
             url: 'https://cors-anywhere.herokuapp.com/https://api.parliament.uk/Live/fixed-query/person_photo_index?format=application%2Fjson',
             dataType: 'JSON',
             type: 'GET',
@@ -17,6 +13,11 @@
                 document.getElementById("image").src = imageURL;
                 var img = document.getElementById("image");
                 console.log('You\'ve requested the image for: '+data.results.bindings[m].displayAs.value);
+                if (img.complete) {
+                } else {
+                    img.addEventListener('load', imageLoaded(imageId))
+                    img.addEventListener('error', function() {})
+                }         
                 
                 correctAnswer = Math.floor(Math.random() * 4);
                 document.getElementById("name"+correctAnswer).innerHTML = data.results.bindings[m].displayAs.value;
@@ -26,21 +27,51 @@
                         document.getElementById("name"+i).innerHTML = data.results.bindings[Math.floor(Math.random() * (data.results.bindings.length))].displayAs.value;
                     }
                 }
+                $('#names').removeClass('hidden');
                 
+                var mid = data.results.bindings[m].person.value;
+                var mid = mid.replace('https://id.parliament.uk/','');
                 correctConstituency = Math.floor(Math.random() * 4);
-                document.getElementById("const"+correctConstituency).innerHTML = data.results.bindings[m].mnisId.value;
                 document.getElementById("correctConstituency").value = correctConstituency;
-                for(i=0; i<4; i++){
-                    if(i !== correctConstituency){
-                        document.getElementById("const"+i).innerHTML = data.results.bindings[Math.floor(Math.random() * (data.results.bindings.length))].mnisId.value;
+                $.ajax({ 
+                    url: 'https://cors-anywhere.herokuapp.com/https://api.parliament.uk/Live/fixed-query/person_by_id?person_id='+mid+'&format=application%2Fjson', 
+                    dataType: 'JSON', 
+                    type: 'GET', 
+                    success: function (mdata) { 
+                        for(const prop in mdata){
+                            if(typeof mdata[prop]["https://id.parliament.uk/schema/constituencyGroupName"] != "undefined"){                   
+                                var constituency = mdata[prop]["https://id.parliament.uk/schema/constituencyGroupName"][0].value;
+                            }
+                        }
+                        document.getElementById("const"+correctConstituency).innerHTML = constituency;
                     }
-                }
+                }); 
                 
-                if (img.complete) {
-                } else {
-                    img.addEventListener('load', imageLoaded(imageId))
-                    img.addEventListener('error', function() {})
-                }              
+                
+                // Get some random constituency names
+                $.ajax({ 
+                    url: 'https://cors-anywhere.herokuapp.com/https://api.parliament.uk/Live/fixed-query/constituency_current?format=application%2Fjson', 
+                    dataType: 'JSON', 
+                    type: 'GET', 
+                    success: function (cdata) { 
+                        var constlist = Array();
+                        
+                        for(const prop in cdata){
+                            if(typeof cdata[prop]["https://id.parliament.uk/schema/constituencyGroupName"] != "undefined"){  
+                                var currentconst = cdata[prop]["https://id.parliament.uk/schema/constituencyGroupName"][0].value;                 
+                                constlist.push(currentconst);
+                            }
+                        }
+                        for(i=0; i<4; i++){
+                            if(i !== correctConstituency){
+                                document.getElementById("const"+i).innerHTML = constlist[Math.floor(Math.random() * constlist.length)];
+                            }
+                        }       
+                    }
+                }); 
+               
+                                       
+                               
             }
         });
     }
@@ -94,7 +125,7 @@
                 $('.btn-danger').addClass('btn-secondary');
                 $('.btn-danger').removeClass('btn-danger');
                 $('#constituencies').addClass('hidden');
-                $('#names').removeClass('hidden');
+                document.getElementById("image").src = 'images/blankface.jpg';
             }, 2000);
         } else {
             var incorrectElement = document.getElementById("const"+answer);
