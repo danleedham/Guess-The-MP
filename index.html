@@ -5,22 +5,19 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
+    <meta name="description" content="Simple game to help identifying British Members of Parliament">
+    <meta name="author" content="Dan Leedham">
     <title>Who's This?</title>
-
     <!-- Bootstrap core CSS -->
     <link href="bootstrap.min.css" rel="stylesheet">
-
     <!-- Custom styles for this template -->
-    <link href="cover.css" rel="stylesheet">
-    
+    <link href="cover.css" rel="stylesheet">    
     <script>
     window.onload = function() {
-        getMemberImageRef();
+        getRandomMember();
     }
-    function getMemberImageRef() {
+    
+    function getRandomMember() {
          $.ajax({
             headers:  {
               'Accept': 'application/json',
@@ -31,11 +28,14 @@
             type: 'GET',
             success: function (data) {
                 var m = Math.floor(Math.random() * (data.results.bindings.length));
+                
                 var imageId = data.results.bindings[m].image.value;
                 var imageId = imageId.replace('https://id.parliament.uk/','');
                 var imageURL = 'https://api.parliament.uk/Live/photo/'+imageId+'.jpeg?crop=CU_1:1&width=186&quality=80';
                 document.getElementById("image").src = imageURL;
+                var img = document.getElementById("image");
                 console.log('You\'ve requested the image for: '+data.results.bindings[m].displayAs.value);
+                
                 correctAnswer = Math.floor(Math.random() * 4);
                 document.getElementById("name"+correctAnswer).innerHTML = data.results.bindings[m].displayAs.value;
                 document.getElementById("correctAnswer").value = correctAnswer;
@@ -43,25 +43,79 @@
                     if(i !== correctAnswer){
                         document.getElementById("name"+i).innerHTML = data.results.bindings[Math.floor(Math.random() * (data.results.bindings.length))].displayAs.value;
                     }
-                }                
+                }
+                
+                correctConstituency = Math.floor(Math.random() * 4);
+                document.getElementById("const"+correctConstituency).innerHTML = data.results.bindings[m].mnisId.value;
+                document.getElementById("correctConstituency").value = correctConstituency;
+                for(i=0; i<4; i++){
+                    if(i !== correctConstituency){
+                        document.getElementById("const"+i).innerHTML = data.results.bindings[Math.floor(Math.random() * (data.results.bindings.length))].mnisId.value;
+                    }
+                }
+                
+                if (img.complete) {
+                } else {
+                    img.addEventListener('load', imageLoaded(imageId))
+                    img.addEventListener('error', function() {})
+                }              
             }
         });
     }
-    function checkanswer(answer) {
+    
+    function imageLoaded(imageId){
+        var img2 = document.getElementById("secondImage");
+        var imageURL = 'https://api.parliament.uk/Live/photo/'+imageId+'.jpeg?crop=CU_1:1&width=500&quality=80';
+        document.getElementById("secondImage").src = imageURL;
+        if (img2.complete) {
+        } else {
+            img2.addEventListener('load', function() {
+                document.getElementById("image").src = imageURL;
+                console.log('Loaded high quality image');
+            })
+            img2.addEventListener('error', function() {})
+        }               
+    }
+    
+    function checkname(answer) {
         var correctAnswer =  document.getElementById("correctAnswer").value;
         if(answer == correctAnswer){
             var correctElement = document.getElementById("name"+correctAnswer);
             correctElement.classList.add("btn-success");
             correctElement.classList.remove("btn-secondary");
             setTimeout(function(){
-                getMemberImageRef();
+                // getRandomMember();
                 correctElement.classList.add("btn-secondary");
                 correctElement.classList.remove("btn-success");
                 $('.btn-danger').addClass('btn-secondary');
                 $('.btn-danger').removeClass('btn-danger');
+                $('#names').addClass('hidden');
+                $('#constituencies').removeClass('hidden');
             }, 2000);
         } else {
             var incorrectElement = document.getElementById("name"+answer);
+            incorrectElement.classList.add("btn-danger");
+            incorrectElement.classList.remove("btn-secondary");
+        }
+    }
+    
+    function checkconst(answer) {
+        var correctConstituency =  document.getElementById("correctConstituency").value;
+        if(answer == correctConstituency){
+            var correctElement = document.getElementById("const"+correctConstituency);
+            correctElement.classList.add("btn-success");
+            correctElement.classList.remove("btn-secondary");
+            setTimeout(function(){
+                getRandomMember();
+                correctElement.classList.add("btn-secondary");
+                correctElement.classList.remove("btn-success");
+                $('.btn-danger').addClass('btn-secondary');
+                $('.btn-danger').removeClass('btn-danger');
+                $('#constituencies').addClass('hidden');
+                $('#names').removeClass('hidden');
+            }, 2000);
+        } else {
+            var incorrectElement = document.getElementById("const"+answer);
             incorrectElement.classList.add("btn-danger");
             incorrectElement.classList.remove("btn-secondary");
         }
@@ -70,13 +124,9 @@
   </head>
 
   <body>
-
     <div class="site-wrapper">
-
       <div class="site-wrapper-inner">
-
         <div class="cover-container">
-
           <header class="masthead clearfix">
             <div class="inner">
               <h3 class="masthead-brand">Who's this?</h3>
@@ -87,41 +137,63 @@
               </nav>
             </div>
           </header>
-
           <main role="main" class="inner cover">
-           <!-- <h1 class="cover-heading">Who's this then?</h1> -->
+            <!-- <h1 class="cover-heading">Who's this then?</h1> -->
             <p class="lead">
-                <img id="image" alt="Image" src="images/blankface.png">
+                <img id="image" class="memberImage" alt="Image" src="images/blankface.jpg">
+                <img id="secondImage" class="hidden" src="images/blankface.jpg">
                 <input id="correctAnswer" type="hidden" value="0">
+                <input id="correctConstituency" type="hidden" value="0">
             </p>
-            <div class="row">
+            <div id="names">
                 <div class="col">
-                    <a id="name0" href="#" onclick="checkanswer(0)" class="btn btn-lg btn-secondary"></a>
+                    <a id="name0" href="#" onclick="checkname(0)" class="btn btn-lg btn-secondary"></a>
                 </div>
                 <div class="col">
-                    <a id="name1" href="#" onclick="checkanswer(1)" class="btn btn-lg btn-secondary"></a>
+                    <a id="name1" href="#" onclick="checkname(1)" class="btn btn-lg btn-secondary"></a>
                 </div>
                 <div class="col">
-                    <a id="name2" href="#" onclick="checkanswer(2)" class="btn btn-lg btn-secondary"></a>
+                    <a id="name2" href="#" onclick="checkname(2)" class="btn btn-lg btn-secondary"></a>
                 </div>
                 <div class="col">
-                    <a id="name3" href="#" onclick="checkanswer(3)" class="btn btn-lg btn-secondary"></a>
+                    <a id="name3" href="#" onclick="checkname(3)" class="btn btn-lg btn-secondary"></a>
+                </div>
+                <div class="col hidden">
+                    <a id="name4" href="#" onclick="checkname(4)" class="btn btn-lg btn-secondary"></a>
+                </div>
+                <div class="col hidden">
+                    <a id="name5" href="#" onclick="checkname(5)" class="btn btn-lg btn-secondary"></a>
+                </div>
+            </div>    
+            <div id="constituencies" class="hidden">
+                <div class="col">
+                    <a id="const0" href="#" onclick="checkconst(0)" class="btn btn-lg btn-secondary"></a>
+                </div>
+                <div class="col">
+                    <a id="const1" href="#" onclick="checkconst(1)" class="btn btn-lg btn-secondary"></a>
+                </div>
+                <div class="col">
+                    <a id="const2" href="#" onclick="checkconst(2)" class="btn btn-lg btn-secondary"></a>
+                </div>
+                <div class="col">
+                    <a id="const3" href="#" onclick="checkconst(3)" class="btn btn-lg btn-secondary"></a>
+                </div>
+                <div class="col hidden">
+                    <a id="const4" href="#" onclick="checkconst(4)" class="btn btn-lg btn-secondary"></a>
+                </div>
+                <div class="col hidden">
+                    <a id="const5" href="#" onclick="checkconst(5)" class="btn btn-lg btn-secondary"></a>
                 </div>
             </div>
           </main>
-
-          <footer class="mastfoot">
+          <!-- <footer class="mastfoot">
             <div class="inner">
               <p>Created by <a href="http://twitter.com/danleedham">Dan Leedham</a></p>
             </div>
-          </footer>
-
+          </footer> -->
         </div>
-
       </div>
-
     </div>
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
