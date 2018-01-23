@@ -1,6 +1,6 @@
     
     function getRandomMember() {
-         $.ajax({
+        $.ajax({
             url: 'https://cors-anywhere.herokuapp.com/https://api.parliament.uk/Live/fixed-query/person_photo_index?format=application%2Fjson',
             dataType: 'JSON',
             type: 'GET',
@@ -11,15 +11,7 @@
                 var imageId = imageId.replace('https://id.parliament.uk/','');
                 var imageURL = 'https://api.parliament.uk/Live/photo/'+imageId+'.jpeg?crop=CU_1:1&width=186&quality=80';
                 document.getElementById("image").src = imageURL;
-                var img = document.getElementById("image");
-                console.log('You\'ve requested the image for: '+data.results.bindings[m].displayAs.value);
-                if (img.complete) {
-                } else {
-                    img.addEventListener('load', imageLoaded(imageId))
-                    img.addEventListener('error', function() {})
-                }         
-                
-                correctAnswer = Math.floor(Math.random() * 4);
+                  correctAnswer = Math.floor(Math.random() * 4);
                 document.getElementById("name"+correctAnswer).innerHTML = data.results.bindings[m].displayAs.value;
                 document.getElementById("correctAnswer").value = correctAnswer;
                 for(i=0; i<4; i++){
@@ -33,6 +25,8 @@
                 var mid = mid.replace('https://id.parliament.uk/','');
                 correctConstituency = Math.floor(Math.random() * 4);
                 document.getElementById("correctConstituency").value = correctConstituency;
+                correctParty = Math.floor(Math.random() * 4);
+                document.getElementById("correctParty").value = correctParty;
                 $.ajax({ 
                     url: 'https://cors-anywhere.herokuapp.com/https://api.parliament.uk/Live/fixed-query/person_by_id?person_id='+mid+'&format=application%2Fjson', 
                     dataType: 'JSON', 
@@ -47,7 +41,8 @@
                             }
                         }
                         document.getElementById("const"+correctConstituency).innerHTML = constituency;
-						document.getElementById("party"+correctParty).innerHTML = '<img src="images/'+party+'.png" width="50px"> '+party;
+						document.getElementById("party"+correctParty).innerHTML = '<img src="images/'+party+'.png">';
+						console.log('You\'ve requested the image for: '+data.results.bindings[m].displayAs.value+' ('+party+')'+' '+constituency);
                     }
                 }); 
                 
@@ -84,16 +79,28 @@
                                 partylist.push(currentparty);
                             }
                         }
+                       
+                        shuffle(partylist);
+                        var sfindex = partylist.indexOf("Sinn Féin");
+                        partylist.splice(sfindex, 1);
+                                                
                         for(i=0; i<4; i++){
                             if(i !== correctParty){
-								var iparty = partylist[Math.floor(Math.random() * partylist.length)];
-                                document.getElementById("party"+i).innerHTML = '<img src="images/'+iparty+'.png" width="50px"> '+iparty;
+								var iparty = partylist[i];
+                                document.getElementById("party"+i).innerHTML = '<img src="images/'+iparty+'.png">';
                             }
                         }       
                     }
                 });				
             }
         });
+        var img = document.getElementById("image");
+                
+        if (img.complete) {
+        } else {
+            img.addEventListener('load', imageLoaded(imageId))
+            img.addEventListener('error', function() {})
+        }      
     }
     
     function imageLoaded(imageId){
@@ -117,7 +124,6 @@
             correctElement.classList.add("btn-success");
             correctElement.classList.remove("btn-secondary");
             setTimeout(function(){
-                // getRandomMember();
                 correctElement.classList.add("btn-secondary");
                 correctElement.classList.remove("btn-success");
                 $('.btn-danger').addClass('btn-secondary');
@@ -135,23 +141,18 @@
     function checkparty(answer) {
         var correctParty =  document.getElementById("correctParty").value;
         if(answer == correctParty){
-            var correctElement = document.getElementById("const"+correctParty);
-            correctElement.classList.add("btn-success");
-            correctElement.classList.remove("btn-secondary");
+            var correctElement = document.getElementById("party"+correctParty);
+            correctElement.classList.add("correctLogo");
             setTimeout(function(){
-                getRandomMember();
-                correctElement.classList.add("btn-secondary");
-                correctElement.classList.remove("btn-success");
-                $('.btn-danger').addClass('btn-secondary');
-                $('.btn-danger').removeClass('btn-danger');
+                $('.incorrectLogo').removeClass('incorrectLogo');
+                $('.correctLogo').removeClass('correctLogo');
                 $('#parties').addClass('hidden');
+                $('#names').addClass('hidden');
 				$('#constituencies').removeClass('hidden');
-                document.getElementById("image").src = 'images/blankface.jpg';
             }, 2000);
         } else {
-            var incorrectElement = document.getElementById("const"+answer);
-            incorrectElement.classList.add("btn-danger");
-            incorrectElement.classList.remove("btn-secondary");
+            var incorrectElement = document.getElementById("party"+answer);
+            incorrectElement.classList.add("incorrectLogo");
         }
     }
 	
@@ -162,13 +163,13 @@
             correctElement.classList.add("btn-success");
             correctElement.classList.remove("btn-secondary");
             setTimeout(function(){
-                getRandomMember();
                 correctElement.classList.add("btn-secondary");
                 correctElement.classList.remove("btn-success");
                 $('.btn-danger').addClass('btn-secondary');
                 $('.btn-danger').removeClass('btn-danger');
                 $('#constituencies').addClass('hidden');
                 document.getElementById("image").src = 'images/blankface.jpg';
+                getRandomMember();
             }, 2000);
         } else {
             var incorrectElement = document.getElementById("const"+answer);
@@ -176,4 +177,22 @@
             incorrectElement.classList.remove("btn-secondary");
         }
     }
-	
+
+	function shuffle(array) {
+        var i = array.length,
+            j = 0,
+            temp;
+
+        while (i--) {
+
+            j = Math.floor(Math.random() * (i+1));
+
+            // swap randomly chosen element with current element
+            temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+
+        }
+
+        return array;
+    }
