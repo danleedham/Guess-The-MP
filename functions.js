@@ -42,20 +42,22 @@
                             if(typeof mdata[prop]["https://id.parliament.uk/schema/constituencyGroupName"] != "undefined"){                   
                                 var constituency = mdata[prop]["https://id.parliament.uk/schema/constituencyGroupName"][0].value;
                             }
+							if(typeof mdata[prop]["https://id.parliament.uk/schema/partyName"] != "undefined"){                   
+                                var party = mdata[prop]["https://id.parliament.uk/schema/partyName"][0].value;
+                            }
                         }
                         document.getElementById("const"+correctConstituency).innerHTML = constituency;
+						document.getElementById("party"+correctParty).innerHTML = '<img src="images/'+party+'.png" width="50px"> '+party;
                     }
                 }); 
                 
-                
-                // Get some random constituency names
+				// Get some random constituency names
                 $.ajax({ 
                     url: 'https://cors-anywhere.herokuapp.com/https://api.parliament.uk/Live/fixed-query/constituency_current?format=application%2Fjson', 
                     dataType: 'JSON', 
                     type: 'GET', 
                     success: function (cdata) { 
-                        var constlist = Array();
-                        
+                        var constlist = Array();                    
                         for(const prop in cdata){
                             if(typeof cdata[prop]["https://id.parliament.uk/schema/constituencyGroupName"] != "undefined"){  
                                 var currentconst = cdata[prop]["https://id.parliament.uk/schema/constituencyGroupName"][0].value;                 
@@ -68,10 +70,28 @@
                             }
                         }       
                     }
-                }); 
-               
-                                       
-                               
+                });	
+                // Get some random party names
+                $.ajax({ 
+                    url: 'https://cors-anywhere.herokuapp.com/https://api.parliament.uk/Live/fixed-query/house_current_parties?house_id=1AFu55Hs&format=application%2Fjson', 
+                    dataType: 'JSON', 
+                    type: 'GET', 
+                    success: function (cdata) { 
+                        var partylist = Array();                    
+                        for(const prop in cdata){
+                            if(typeof cdata[prop]["https://id.parliament.uk/schema/partyName"] != "undefined"){  
+                                var currentparty = cdata[prop]["https://id.parliament.uk/schema/partyName"][0].value;                 
+                                partylist.push(currentparty);
+                            }
+                        }
+                        for(i=0; i<4; i++){
+                            if(i !== correctParty){
+								var iparty = partylist[Math.floor(Math.random() * partylist.length)];
+                                document.getElementById("party"+i).innerHTML = '<img src="images/'+iparty+'.png" width="50px"> '+iparty;
+                            }
+                        }       
+                    }
+                });				
             }
         });
     }
@@ -103,7 +123,7 @@
                 $('.btn-danger').addClass('btn-secondary');
                 $('.btn-danger').removeClass('btn-danger');
                 $('#names').addClass('hidden');
-                $('#constituencies').removeClass('hidden');
+                $('#parties').removeClass('hidden');
             }, 2000);
         } else {
             var incorrectElement = document.getElementById("name"+answer);
@@ -111,7 +131,30 @@
             incorrectElement.classList.remove("btn-secondary");
         }
     }
-    
+	
+    function checkparty(answer) {
+        var correctParty =  document.getElementById("correctParty").value;
+        if(answer == correctParty){
+            var correctElement = document.getElementById("const"+correctParty);
+            correctElement.classList.add("btn-success");
+            correctElement.classList.remove("btn-secondary");
+            setTimeout(function(){
+                getRandomMember();
+                correctElement.classList.add("btn-secondary");
+                correctElement.classList.remove("btn-success");
+                $('.btn-danger').addClass('btn-secondary');
+                $('.btn-danger').removeClass('btn-danger');
+                $('#parties').addClass('hidden');
+				$('#constituencies').removeClass('hidden');
+                document.getElementById("image").src = 'images/blankface.jpg';
+            }, 2000);
+        } else {
+            var incorrectElement = document.getElementById("const"+answer);
+            incorrectElement.classList.add("btn-danger");
+            incorrectElement.classList.remove("btn-secondary");
+        }
+    }
+	
     function checkconst(answer) {
         var correctConstituency =  document.getElementById("correctConstituency").value;
         if(answer == correctConstituency){
@@ -133,3 +176,4 @@
             incorrectElement.classList.remove("btn-secondary");
         }
     }
+	

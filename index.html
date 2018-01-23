@@ -41,6 +41,7 @@
                 <img id="image" class="memberImage" alt="Image" src="images/blankface.jpg">
                 <img id="secondImage" class="hidden" src="images/blankface.jpg">
                 <input id="correctAnswer" type="hidden" value="0">
+				<input id="correctParty" type="hidden" value="0">
                 <input id="correctConstituency" type="hidden" value="0">
             </p>
             <div id="names" class="hidden">
@@ -62,7 +63,27 @@
                 <div class="col hidden">
                     <a id="name5" href="#" onclick="checkname(5)" class="btn btn-lg btn-secondary"></a>
                 </div>
-            </div>    
+            </div>
+			<div id="parties" class="hidden">
+                <div class="col">
+                    <a id="party0" href="#" onclick="checkparty(0)" class="party-btn"></a>
+                </div>
+                <div class="col">
+                    <a id="party1" href="#" onclick="checkparty(1)" class="party-btn"></a>
+                </div>
+                <div class="col">
+                    <a id="party2" href="#" onclick="checkparty(2)" class="party-btn"></a>
+                </div>
+                <div class="col">
+                    <a id="party3" href="#" onclick="checkparty(3)" class="party-btn"></a>
+                </div>
+                <div class="col hidden">
+                    <a id="party4" href="#" onclick="checkparty(4)" class="party-btn"></a>
+                </div>
+                <div class="col hidden">
+                    <a id="party5" href="#" onclick="checkparty(5)" class="party-btn"></a>
+                </div>
+            </div>			
             <div id="constituencies" class="hidden">
                 <div class="col">
                     <a id="const0" href="#" onclick="checkconst(0)" class="btn btn-lg btn-secondary"></a>
