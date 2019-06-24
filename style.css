@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
+html, body {
+  height: 100%;
+  background-color: #333;
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  color: #fff;
+  text-align: center;
+}
+
+h1 {
+    font-size: 4vw;
+}
+
+
+h2 {
+    margin-top: -24px;
+    margin-bottom: -12px;
+    font-size: 3.25vw;
+}
+ 
+a {
+  color: #fff;
+}
+
+.imageContainer {
+    position: relative;
+    text-align: center;
+    color: white;
+}
+
+#Label {
+    font-size: 36px;
+    position: relative;
+    bottom: 56px;
+    background-color: rgba(51, 51, 51, 0.4);
+    max-width: 100%;
+}
+
+.hidden {
+    display: none;
+}
+
+.memberImage {
+    max-width: 75%;
+}
+
+#ministerList {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around; 
+}
+
+.ministerElement {
+    flex-grow: 1;
+    flex-wrap: wrap;
+    flex-basis: 25%;
+}
+
+@media only screen and (max-width: 1200px){
+    .ministerElement {
+        flex-basis: 50%;
+    }
+}
+
+@media only screen and (max-width: 800px){
+    .ministerElement {
+        flex-basis: 100%;
+    }
+}
+
+.ministerName {
+    font-size: 28px;
+}

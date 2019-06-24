@@ -4,98 +4,29 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Simple game to help identifying British Members of Parliament">
+    <meta name="description" content="Simple webpage to find the current Defence Ministers">
     <meta name="author" content="Dan Leedham">
-    <title>Who's This?</title>
-    <!-- Bootstrap core CSS -->
-    <link href="bootstrap.min.css" rel="stylesheet">
-    <!-- Custom styles for this template -->
-    <link href="cover.css" rel="stylesheet">
+    <title>Who's Defence Secretary?</title>
     <script src="functions.js"></script>    
     <script>
     window.onload = function() {
-        getRandomMember();
+        getDefenceMembers();
     }
     </script>
-    
+    <link rel="stylesheet" href="style.css">
   </head>
 
   <body>
-    <div class="site-wrapper">
-      <div class="site-wrapper-inner">
-        <div class="cover-container">
-          <header class="masthead clearfix">
-            <div class="inner">
-             <!-- <h3 class="masthead-brand">Who's this?</h3> -->
-              <nav class="nav nav-masthead">
-                <a class="nav-link active" href="#">Easy</a>
-                <a class="nav-link" href="#">Medium</a>
-                <a class="nav-link" href="#">Hard</a>
-              </nav>
-            </div>
-          </header>
-          <main role="main" class="inner cover">
-            <!-- <h1 class="cover-heading">Who's this then?</h1> -->
-            <p class="lead">
-                <img id="image" class="memberImage" alt="Image" src="images/blankface.jpg">
-                <img id="secondImage" class="hidden" src="images/blankface.jpg">
-                <input id="correctAnswer" type="hidden" value="0">
-                <input id="correctConstituency" type="hidden" value="0">
-            </p>
-            <div id="names" class="hidden">
-                <div class="col">
-                    <a id="name0" href="#" onclick="checkname(0)" class="btn btn-lg btn-secondary"></a>
-                </div>
-                <div class="col">
-                    <a id="name1" href="#" onclick="checkname(1)" class="btn btn-lg btn-secondary"></a>
-                </div>
-                <div class="col">
-                    <a id="name2" href="#" onclick="checkname(2)" class="btn btn-lg btn-secondary"></a>
-                </div>
-                <div class="col">
-                    <a id="name3" href="#" onclick="checkname(3)" class="btn btn-lg btn-secondary"></a>
-                </div>
-                <div class="col hidden">
-                    <a id="name4" href="#" onclick="checkname(4)" class="btn btn-lg btn-secondary"></a>
-                </div>
-                <div class="col hidden">
-                    <a id="name5" href="#" onclick="checkname(5)" class="btn btn-lg btn-secondary"></a>
-                </div>
-            </div>    
-            <div id="constituencies" class="hidden">
-                <div class="col">
-                    <a id="const0" href="#" onclick="checkconst(0)" class="btn btn-lg btn-secondary"></a>
-                </div>
-                <div class="col">
-                    <a id="const1" href="#" onclick="checkconst(1)" class="btn btn-lg btn-secondary"></a>
-                </div>
-                <div class="col">
-                    <a id="const2" href="#" onclick="checkconst(2)" class="btn btn-lg btn-secondary"></a>
-                </div>
-                <div class="col">
-                    <a id="const3" href="#" onclick="checkconst(3)" class="btn btn-lg btn-secondary"></a>
-                </div>
-                <div class="col hidden">
-                    <a id="const4" href="#" onclick="checkconst(4)" class="btn btn-lg btn-secondary"></a>
-                </div>
-                <div class="col hidden">
-                    <a id="const5" href="#" onclick="checkconst(5)" class="btn btn-lg btn-secondary"></a>
-                </div>
-            </div>
-          </main>
-          <!-- <footer class="mastfoot">
-            <div class="inner">
-              <p>Created by <a href="http://twitter.com/danleedham">Dan Leedham</a></p>
-            </div>
-          </footer> -->
-        </div>
-      </div>
+    <h1>Current Secretary of State</h1>
+    <div class="imageContainer">
+      <img id="image" class="memberImage" alt="Image" src="images/blankface.jpg">
+      <img id="secondImage" class="hidden" src="images/blankface.jpg">
+      <div id="Label" class="centered">Centered</div>
     </div>
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="popper.min.js"></script>
-    <script src="bootstrap.min.js"></script>
+
+    <h2>Ministerial Team</h2>
+    <div id="details">
+        <div id="ministerList"></div>
+    </div>
   </body>
 </html>
